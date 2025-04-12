@@ -21,4 +21,11 @@ async fn login_returns_ok_status() {
 }
 // localhost:3000/logout
 // localhost:3000/signup
+#[tokio::test]
+async fn signup_returns_ok_status() {
+    let app = TestApp::new().await;
+
+    let response = app.post_signup().await;
+    assert_eq!(response.status().as_u16(), 200);
+}
 // localhost:3000/verify-token

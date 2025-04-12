@@ -1,5 +1,12 @@
-use crate::routes::login::login_route;
-use axum::{response::IntoResponse, routing::post, serve::Serve, Router};
+use crate::routes::{
+    login::login_route,
+    signup::signup_route
+};
+use axum::{
+    routing::post,
+    serve::Serve,
+    Router
+};
 use std::error::Error;
 use tower_http::services::ServeDir;
 
@@ -16,7 +23,8 @@ impl Application {
     pub async fn build(address: &str) -> Result<Self, Box<dyn Error>> {
         let router = Router::new()
             .nest_service("/", ServeDir::new("assets"))
-            .route("/login", post(login_route));
+            .route("/login", post(login_route))
+            .route("/signup", post(signup_route));
 
         let listener = tokio::net::TcpListener::bind(address).await?;
         let address = listener.local_addr()?.to_string();
