@@ -1,13 +1,10 @@
 use crate::routes::{
-    login::login_route,
-    logout::logout_route,
-    signup::signup_route,
-    verify_token::verify_token_route,
+    login_route, logout_route, signup_route, verify_2fa_route, verify_token_route,
 };
 use axum::{
-    routing::{post, delete},
+    routing::{delete, post},
     serve::Serve,
-    Router
+    Router,
 };
 use std::error::Error;
 use tower_http::services::ServeDir;
@@ -28,7 +25,8 @@ impl Application {
             .route("/login", post(login_route))
             .route("/logout", delete(logout_route))
             .route("/signup", post(signup_route))
-            .route("/verify-token", post(verify_token_route));
+            .route("/verify-token", post(verify_token_route))
+            .route("/verify-2fa", post(verify_2fa_route));
 
         let listener = tokio::net::TcpListener::bind(address).await?;
         let address = listener.local_addr()?.to_string();
