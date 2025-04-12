@@ -10,3 +10,15 @@ async fn root_returns_auth_ui() {
     assert_eq!(response.status().as_u16(), 200);
     assert_eq!(response.headers().get("content-type").unwrap(), "text/html");
 }
+
+// localhost:3000/login
+#[tokio::test]
+async fn login_returns_ok_status() {
+    let app = TestApp::new().await;
+
+    let response = app.post_login().await;
+    assert_eq!(response.status().as_u16(), 200);
+}
+// localhost:3000/logout
+// localhost:3000/signup
+// localhost:3000/verify-token

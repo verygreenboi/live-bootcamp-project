@@ -37,4 +37,12 @@ impl TestApp {
             .await
             .expect("Failed to execute request.")
     }
+
+    pub async fn post_login(&self) -> reqwest::Response {
+        self.http_client
+            .post(&format!("{}/login", &self.address))
+            .send()
+            .await
+            .expect("Failed to execute request.")
+    }
 }
