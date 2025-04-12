@@ -1,9 +1,10 @@
 use crate::routes::{
     login::login_route,
+    logout::logout_route,
     signup::signup_route
 };
 use axum::{
-    routing::post,
+    routing::{post, delete},
     serve::Serve,
     Router
 };
@@ -24,6 +25,7 @@ impl Application {
         let router = Router::new()
             .nest_service("/", ServeDir::new("assets"))
             .route("/login", post(login_route))
+            .route("/logout", delete(logout_route))
             .route("/signup", post(signup_route));
 
         let listener = tokio::net::TcpListener::bind(address).await?;

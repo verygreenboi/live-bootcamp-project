@@ -53,4 +53,12 @@ impl TestApp {
             .await
             .expect("Failed to execute request.")
     }
+
+    pub async fn delete_logout(&self) -> reqwest::Response {
+        self.http_client
+            .delete(&format!("{}/logout", &self.address))
+            .send()
+            .await
+            .expect("Failed to execute request.")
+    }
 }

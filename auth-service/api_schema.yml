@@ -203,7 +203,7 @@ paths:
                     type: string
 
   /logout:
-    post:
+    delete:
       summary: Logout user
       parameters:
         - in: cookie
