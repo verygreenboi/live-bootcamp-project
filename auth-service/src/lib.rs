@@ -1,7 +1,8 @@
 use crate::routes::{
     login::login_route,
     logout::logout_route,
-    signup::signup_route
+    signup::signup_route,
+    verify_token::verify_token_route,
 };
 use axum::{
     routing::{post, delete},
@@ -26,7 +27,8 @@ impl Application {
             .nest_service("/", ServeDir::new("assets"))
             .route("/login", post(login_route))
             .route("/logout", delete(logout_route))
-            .route("/signup", post(signup_route));
+            .route("/signup", post(signup_route))
+            .route("/verify-token", post(verify_token_route));
 
         let listener = tokio::net::TcpListener::bind(address).await?;
         let address = listener.local_addr()?.to_string();
