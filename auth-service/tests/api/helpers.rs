@@ -1,4 +1,8 @@
+use std::sync::Arc;
+use tokio::sync::RwLock;
+use auth_service::app_state::AppState;
 use auth_service::Application;
+use auth_service::services::HashmapUserStore;
 
 pub struct TestApp {
     pub address: String,
@@ -10,7 +14,9 @@ const TEST_SERVER_HOST: &str = "127.0.0.1:0";
 
 impl TestApp {
     pub async fn new() -> Self {
-        let app = Application::build(TEST_SERVER_HOST)
+        let user_store = Arc::new(RwLock::new(HashmapUserStore::new()));
+        let app_state = AppState::new(user_store);
+        let app = Application::build(app_state, TEST_SERVER_HOST)
             .await
             .expect("Failed to build app");
 
