@@ -35,7 +35,7 @@ impl HashmapUserStore {
         }
     }
 
-    pub fn validate_user(&mut self, user: User) -> Result<(), UserStoreError> {
+    pub fn validate_user(&mut self, user: &User) -> Result<(), UserStoreError> {
         let stored_user = self.get_user(&user.email);
         match stored_user {
             Ok(stored_user) => {
@@ -94,7 +94,7 @@ mod tests {
             false,
         );
 
-        let result = store.validate_user(user);
+        let result = store.validate_user(&user);
         assert_eq!(result.err(), Some(UserStoreError::UserNotFound));
     }
 
@@ -119,7 +119,7 @@ mod tests {
             false,
         );
 
-        let result = store.validate_user(user);
+        let result = store.validate_user(&user);
         assert_eq!(result.err(), Some(UserStoreError::InvalidCredentials));
     }
 
@@ -137,7 +137,7 @@ mod tests {
         // Add the user to the store
         let _ = store.add_user(user.clone());
 
-        let result = store.validate_user(user);
+        let result = store.validate_user(&user);
         assert!(result.is_ok());
     }
 
