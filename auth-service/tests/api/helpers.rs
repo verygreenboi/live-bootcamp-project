@@ -15,7 +15,7 @@ const TEST_SERVER_HOST: &str = "127.0.0.1:0";
 impl TestApp {
     pub async fn new() -> Self {
         let user_store = Arc::new(RwLock::new(HashmapUserStore::new()));
-        let app_state = AppState::new(user_store);
+        let app_state = AppState { user_store };
         let app = Application::build(app_state, TEST_SERVER_HOST)
             .await
             .expect("Failed to build app");

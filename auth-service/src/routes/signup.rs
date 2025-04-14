@@ -1,6 +1,5 @@
 use crate::app_state::AppState;
-use crate::domain::{AuthAPIError, User};
-use crate::services::UserStoreError;
+use crate::domain::{AuthAPIError, User, UserStoreError};
 use axum::{
     extract::State,
     http::StatusCode,
@@ -71,7 +70,7 @@ pub async fn signup_route(
     }
 
     let user = request.to_user();
-    let result = store.add_user(user);
+    let result = store.add_user(user).await;
 
     if result.is_ok() {
         let response = Json(SignupResponse {

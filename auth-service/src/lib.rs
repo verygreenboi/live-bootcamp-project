@@ -1,8 +1,10 @@
 pub mod routes;
-mod domain;
+pub mod domain;
 pub mod services;
 pub mod app_state;
 
+use crate::app_state::AppState;
+use crate::domain::UserStore;
 use crate::routes::{
     login_route, logout_route, signup_route, verify_2fa_route, verify_token_route,
 };
@@ -13,7 +15,6 @@ use axum::{
 };
 use std::error::Error;
 use tower_http::services::ServeDir;
-use crate::app_state::AppState;
 
 pub struct Application {
     server: Serve<Router, Router>,
