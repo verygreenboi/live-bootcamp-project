@@ -1,8 +1,8 @@
-use crate::domain::{User, UserStore, UserStoreError};
+use crate::domain::{Email, User, UserStore, UserStoreError};
 use std::collections::HashMap;
 
 pub struct HashmapUserStore {
-    users: HashMap<String, User>,
+    users: HashMap<Email, User>,
 }
 
 impl HashmapUserStore {
@@ -16,14 +16,14 @@ impl HashmapUserStore {
 #[async_trait::async_trait]
 impl UserStore for HashmapUserStore {
     async fn add_user(&mut self, user: User) -> Result<(), UserStoreError> {
-        if self.users.contains_key(&user.email.as_ref().to_string()) {
+        if self.users.contains_key(&user.email) {
             return Err(UserStoreError::UserAlreadyExists);
         }
 
-        self.users.insert(user.email.clone().as_ref().to_string(), user);
+        self.users.insert(user.email.clone(), user);
         Ok(())
     }
-    async fn get_user(&self, email: &str) -> Result<&User, UserStoreError> {
+    async fn get_user(&self, email: &Email) -> Result<&User, UserStoreError> {
         let user = self.users.get(email);
         match user {
             Some(user) => Ok(user),
@@ -32,7 +32,7 @@ impl UserStore for HashmapUserStore {
     }
 
     async fn validate_user(&mut self, user: &User) -> Result<(), UserStoreError> {
-        let stored_user = self.get_user(&user.email.as_ref().to_string()).await;
+        let stored_user = self.get_user(&user.email).await;
         match stored_user {
             Ok(stored_user) => {
                 if stored_user.password.as_ref() == user.password.as_ref() {
@@ -73,9 +73,9 @@ mod tests {
     #[tokio::test]
     async fn get_nonexistent_user_returns_error() {
         let store = HashmapUserStore::new();
-        let email = "test@example.com";
+        let email = Email::parse("test@example.com").unwrap();
 
-        let result = store.get_user(email).await;
+        let result = store.get_user(&email).await;
         assert_eq!(result.err(), Some(UserStoreError::UserNotFound));
     }
 

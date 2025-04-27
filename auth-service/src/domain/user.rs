@@ -3,9 +3,9 @@ use crate::domain::password::Password;
 
 #[derive(Clone)]
 pub struct User {
-    pub(crate) email: Email,
-    pub(crate) password: Password,
-    requires_2fa: bool
+    pub email: Email,
+    pub password: Password,
+    pub requires_2fa: bool
 }
 
 impl User {

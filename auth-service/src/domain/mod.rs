@@ -7,3 +7,5 @@ mod password;
 pub use data_stores::*;
 pub use error::*;
 pub use user::*;
+pub use email::*;
+pub use password::*;
