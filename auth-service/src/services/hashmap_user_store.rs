@@ -35,7 +35,7 @@ impl UserStore for HashmapUserStore {
         let stored_user = self.get_user(&user.email.as_ref().to_string()).await;
         match stored_user {
             Ok(stored_user) => {
-                if stored_user.password == user.password {
+                if stored_user.password.as_ref() == user.password.as_ref() {
                     Ok(())
                 } else {
                     Err(UserStoreError::InvalidCredentials)
@@ -59,7 +59,7 @@ mod tests {
         // Create a test user
         let user = User::new(
             "test@example.com".to_string(),
-            "test_password".to_string(),
+            "test_Passw0rd!".to_string(),
             false,
         );
         let mut result = store.add_user(user.clone()).await;
@@ -86,7 +86,7 @@ mod tests {
         // Create a test user
         let user = User::new(
             "test@example.com".to_string(),
-            "test_password".to_string(),
+            "test_Passw0rd!".to_string(),
             false,
         );
 
@@ -101,7 +101,7 @@ mod tests {
         // Create a test user
         let user = User::new(
             "test@example.com".to_string(),
-            "test_password".to_string(),
+            "test_Passw0rd!".to_string(),
             false,
         );
 
@@ -111,7 +111,7 @@ mod tests {
         // Create a test user with incorrect password
         let user = User::new(
             "test@example.com".to_string(),
-            "wrong_password".to_string(),
+            "test_wrong_Passw0rd!".to_string(),
             false,
         );
 
@@ -126,7 +126,7 @@ mod tests {
         // Create a test user
         let user = User::new(
             "test@example.com".to_string(),
-            "test_password".to_string(),
+            "test_Passw0rd!".to_string(),
             false,
         );
 

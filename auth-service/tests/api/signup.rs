@@ -41,7 +41,7 @@ async fn signup_returns_created_status_when_inputs_are_valid() {
 
     let test_case = serde_json::json!({
         "email": random_email,
-        "password": "password123",
+        "password": "test_Passw0rd!",
         "requires2FA": true
     });
     let response = app.post_signup(&test_case).await;
@@ -114,7 +114,7 @@ async fn should_return_409_if_email_already_exists() {
     let random_email = get_random_email();
     let signup_request = serde_json::json!({
         "email": random_email,
-        "password": "password123!",
+        "password": "passworD123!",
         "requires2FA": true
     });
     app.post_signup(&signup_request).await;
