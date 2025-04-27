@@ -16,11 +16,11 @@ impl HashmapUserStore {
 #[async_trait::async_trait]
 impl UserStore for HashmapUserStore {
     async fn add_user(&mut self, user: User) -> Result<(), UserStoreError> {
-        if self.users.contains_key(&user.email) {
+        if self.users.contains_key(&user.email.as_ref().to_string()) {
             return Err(UserStoreError::UserAlreadyExists);
         }
 
-        self.users.insert(user.email.clone(), user);
+        self.users.insert(user.email.clone().as_ref().to_string(), user);
         Ok(())
     }
     async fn get_user(&self, email: &str) -> Result<&User, UserStoreError> {
@@ -32,7 +32,7 @@ impl UserStore for HashmapUserStore {
     }
 
     async fn validate_user(&mut self, user: &User) -> Result<(), UserStoreError> {
-        let stored_user = self.get_user(&user.email).await;
+        let stored_user = self.get_user(&user.email.as_ref().to_string()).await;
         match stored_user {
             Ok(stored_user) => {
                 if stored_user.password == user.password {
