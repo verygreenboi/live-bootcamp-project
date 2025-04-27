@@ -1,18 +1,15 @@
+use validator::validate_email;
+
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
 pub struct Email(String);
 
 impl Email {
     pub fn parse(email: &str) -> Result<Email, String> {
-        if Self::is_valid(email) {
+        if validate_email(email) {
             Ok(Email(email.to_string()))
         } else {
             Err("invalid email".to_string())
         }
-    }
-
-    /// Private method to validate an email string
-    fn is_valid(email: &str) -> bool {
-        email.contains('@')
     }
 }
 
