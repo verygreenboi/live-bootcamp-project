@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-service
+  namespace: live-bootcamp-proj
+  labels:
+    app: app-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-service
+  template:
+    metadata:
+      labels:
+        app: app-service
+    spec:
+      containers:
+        - name: auth-service
+          image: mrsmith9ja/auth-service
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+        - name: app-service
+          image: mrsmith9ja/app-service
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          env:
+            - name: APP_SERVICE_PORT  # Add this environment variable
+              valueFrom:
+                configMapKeyRef:
+                  name: app-service-config
+                  key: APP_SERVICE_PORT
+            - name: AUTH_SERVICE_IP
+              value: "http://localhost:3000"
