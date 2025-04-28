@@ -28,28 +28,9 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: ${{ runner.os }}-cargo-
 
-      # Generate metadata for app-service
-    - name: Docker meta for app-service
-      id: meta-app
-      uses: docker/metadata-action@v5
-      with:
-        images: mrsmith9ja/app-service
-        tags: |
-          type=raw,value=latest
-          type=raw,value={{date 'YYYYMMDD'}}-{{sha}}
-          type=sha,format=short
-
-      # Generate metadata for auth-service
-    - name: Docker meta for auth-service
-      id: meta-auth
-      uses: docker/metadata-action@v5
-      with:
-        images: mrsmith9ja/auth-service
-        tags: |
-          type=raw,value=latest
-          type=raw,value={{date 'YYYYMMDD'}}-{{sha}}
-          type=sha,format=short
-
+    - name: Generate version tag
+      id: version
+      run: echo "VERSION=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     - name: Install Rust
       run: rustup update stable && rustup default stable
@@ -80,14 +61,13 @@ jobs:
       uses: docker/bake-action@v2.3.0
       with:
         push: true
-        files: |
-          compose.yml
-          compose.override.yml
+        files: ./docker-bake.hcl
         set: |
           *.cache-from=type=gha
-          *.cache-to=type=gha,mode=max          
-          app-service.tags=${{ steps.meta-app.outputs.tags }}
-          auth-service.tags=${{ steps.meta-auth.outputs.tags }}
+          *.cache-to=type=gha,mode=max
+          app-service.tags=mrsmith9ja/app-service:latest,mrsmith9ja/app-service:${{ steps.version.outputs.VERSION }}
+          auth-service.tags=mrsmith9ja/auth-service:latest,mrsmith9ja/auth-service:${{ steps.version.outputs.VERSION }}
+
 
 
   deploy:
@@ -98,17 +78,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+      # Generate version tag (same as build job)
+    - name: Generate version tag
+      id: version
+      run: echo "VERSION=$(date +'%Y%m%d')-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      # Generate the same metadata for deployment
-    - name: Set version for deployment
-      id: meta-deploy
-      uses: docker/metadata-action@v5
-      with:
-        images: mrsmith9ja/app-service  # We just need the tag format, not the actual image name
-        tags: |
-          type=raw,value={{date 'YYYYMMDD'}}-{{sha}}
-
-    # Set up Kubernetes configuration
+      # Set up Kubernetes configuration
     - name: Set up kubeconfig
       uses: azure/k8s-set-context@v4
       with:
@@ -119,12 +94,12 @@ jobs:
     - name: Deploy to Kubernetes
       run: |
         # Extract just the tag from the output (without the image name)
-        VERSION_TAG=$(echo "${{ steps.meta-deploy.outputs.tags }}" | grep -o '[^:]*$' | head -1)
+        echo "Using version tag: ${{ steps.version.outputs.VERSION }}"
         echo "Using version tag: $VERSION_TAG"
         
         # Update the image references with version tags
-        sed -i "s|image: mrsmith9ja/app-service|image: mrsmith9ja/app-service:$VERSION_TAG|g" k8/app-service.deployment.yml
-        sed -i "s|image: mrsmith9ja/auth-service|image: mrsmith9ja/auth-service:$VERSION_TAG|g" k8/app-service.deployment.yml
+        sed -i "s|image: mrsmith9ja/app-service|image: mrsmith9ja/app-service:${{ steps.version.outputs.VERSION }}|g" k8/app-service.deployment.yml
+        sed -i "s|image: mrsmith9ja/auth-service|image: mrsmith9ja/auth-service:${{ steps.version.outputs.VERSION }}|g" k8/app-service.deployment.yml
 
         # Apply namespace
         kubectl apply -f k8/namespace.yml
