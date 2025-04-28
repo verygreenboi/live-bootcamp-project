@@ -139,7 +139,7 @@ jobs:
         kubectl apply -f k8/namespace.yml
         
         # Apply service
-        kubectl apply -f k8/service.yml
+        kubectl apply -f k8/services.yml
 
         # Apply deployment
         kubectl apply -f k8/app-service.deployment.yml
