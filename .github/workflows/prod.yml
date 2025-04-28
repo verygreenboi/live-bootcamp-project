@@ -57,6 +57,41 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Update docker-bake.hcl with version tags
+      run: |
+        VERSION="${{ steps.version.outputs.VERSION }}"
+        
+        # Create a more reliable file using variables
+        cat > docker-bake.hcl << 'EOF'
+        group "default" {
+          targets = ["app-service", "auth-service"]
+        }
+        
+        target "app-service" {
+          context = "./app-service"
+          tags = [
+            "mrsmith9ja/app-service:latest",
+            "mrsmith9ja/app-service:VERSION_PLACEHOLDER"
+          ]
+        }
+        
+        target "auth-service" {
+          context = "./auth-service"
+          tags = [
+            "mrsmith9ja/auth-service:latest",
+            "mrsmith9ja/auth-service:VERSION_PLACEHOLDER"
+          ]
+        }
+        EOF
+        
+        # Replace the placeholder with the actual version
+        sed -i "s/VERSION_PLACEHOLDER/$VERSION/g" docker-bake.hcl
+        
+        # Show the file for debugging
+        cat docker-bake.hcl
+
+
+
     - name: Build and push Docker images
       uses: docker/bake-action@v2.3.0
       with:
@@ -65,8 +100,6 @@ jobs:
         set: |
           *.cache-from=type=gha
           *.cache-to=type=gha,mode=max
-          app-service.tags=["mrsmith9ja/app-service:latest","mrsmith9ja/app-service:${{ steps.version.outputs.VERSION }}"]
-          auth-service.tags=["mrsmith9ja/auth-service:latest","mrsmith9ja/auth-service:${{ steps.version.outputs.VERSION }}"]
 
 
 
