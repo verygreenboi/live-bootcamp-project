@@ -27,5 +27,5 @@ spec:
             - containerPort: 8000
               protocol: TCP
           env:
-            - name: AUTH_SERVICE_IP
-              value: "localhost"
+            - name: AUTH_SERVICE_URL
+              value: "https://auth-service.lbc.purple-cipher.com"
