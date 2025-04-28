@@ -27,10 +27,5 @@ spec:
             - containerPort: 8000
               protocol: TCP
           env:
-            - name: APP_SERVICE_PORT  # Add this environment variable
-              valueFrom:
-                configMapKeyRef:
-                  name: app-service-config
-                  key: APP_SERVICE_PORT
             - name: AUTH_SERVICE_IP
-              value: "http://localhost:3000"
+              value: "localhost"
