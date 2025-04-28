@@ -138,18 +138,8 @@ jobs:
         # Apply namespace
         kubectl apply -f k8/namespace.yml
         
-        # Wait for namespace to be ready
-        kubectl wait --for=condition=Ready ns/live-bootcamp-proj
-        
         # Apply service
         kubectl apply -f k8/service.yml
-        
-        # Wait for service to be ready
-        kubectl wait --for=condition=Ready svc/app-service
 
         # Apply deployment
         kubectl apply -f k8/app-service.deployment.yml
-        
-        # Wait for deployment to be ready
-        kubectl wait --for=condition=Ready deployment/app-service
-
