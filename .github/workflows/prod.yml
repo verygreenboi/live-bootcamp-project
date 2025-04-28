@@ -143,3 +143,6 @@ jobs:
 
         # Apply deployment
         kubectl apply -f k8/app-service.deployment.yml
+        
+        # Apply ingress
+        kubectl apply -f k8/ingresses.yml
