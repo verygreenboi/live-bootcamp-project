@@ -13,12 +13,12 @@ metadata:
 
 spec:
   tls:
-    - secretName: lbc-purple-cipher.com
+    - secretName: lbc-verygreenboi.com
       hosts:
-        - app-service.lbc.purple-cipher.com
-        - auth-service.lbc.purple-cipher.com
+        - app-service.lbc.verygreenboi.com
+        - auth-service.lbc.verygreenboi.com
   rules:
-    - host: app-service.lbc.purple-cipher.com
+    - host: app-service.lbc.verygreenboi.com
       http:
         paths:
           - path: /
@@ -28,7 +28,7 @@ spec:
                 name: app-service
                 port:
                   number: 8000
-    - host: auth-service.lbc.purple-cipher.com
+    - host: auth-service.lbc.verygreenboi.com
       http:
         paths:
           - path: /
