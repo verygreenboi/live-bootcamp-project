@@ -65,8 +65,9 @@ jobs:
         set: |
           *.cache-from=type=gha
           *.cache-to=type=gha,mode=max
-          app-service.tags=mrsmith9ja/app-service:latest,mrsmith9ja/app-service:${{ steps.version.outputs.VERSION }}
-          auth-service.tags=mrsmith9ja/auth-service:latest,mrsmith9ja/auth-service:${{ steps.version.outputs.VERSION }}
+          app-service.tags=["mrsmith9ja/app-service:latest","mrsmith9ja/app-service:${{ steps.version.outputs.VERSION }}"]
+          auth-service.tags=["mrsmith9ja/auth-service:latest","mrsmith9ja/auth-service:${{ steps.version.outputs.VERSION }}"]
+
 
 
 
